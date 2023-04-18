@@ -1,0 +1,21 @@
+---
+- hosts: monitoring
+  gather_facts: no
+  become_method: sudo
+  become_user: root 
+  become: yes
+
+  vars_prompt:
+
+    - name: peer_ip
+      prompt: Peer VPN IP
+      private: false
+
+    - name: peer_key
+      prompt: Peer VPN public key
+      private: false
+
+  tasks:
+
+  - name: Add peer to wireguard
+    shell: sudo wg set wg0 peer {{ peer_key }} allowed-ips {{ peer_ip }}

@@ -1,0 +1,100 @@
+---
+# tasks file for prometheus
+
+- name: Get latest version of Prometheus
+  ansible.builtin.shell: |
+    wget $(curl -s https://api.github.com/repos/prometheus/prometheus/releases/latest |grep "tag_name" | \
+    awk '{print "https://github.com/prometheus/prometheus/releases/download/" \
+    substr($2, 2, length($2)-3) "/prometheus-" substr($2, 3, length($2)-4) ".linux-amd64.tar.gz"}')
+    tar xvf prometheus-*.tar.gz
+
+- name: Copy files to /usr/local/bin
+  become: true
+  ansible.builtin.shell: |
+    mv ./prometheus-*.linux-amd64/prometheus /usr/local/bin/
+    mv ./prometheus-*.linux-amd64/promtool /usr/local/bin/
+    cp -r ./prometheus-*.linux-amd64/consoles /etc/prometheus
+    cp -r ./prometheus-*.linux-amd64/console_libraries /etc/prometheus
+
+- name: Ensure group "prometheus" exists
+  ansible.builtin.group:
+    name: prometheus
+    state: present
+
+- name: Ensure user "prometheus" exists
+  ansible.builtin.user:
+    name: prometheus
+    state: present
+    group: prometheus
+
+- name: Create /etc/prometheus/ if it does not exist
+  ansible.builtin.file:
+    path: /etc/prometheus/
+    state: directory
+    owner: prometheus
+    group: prometheus
+
+- name: Create /var/lib/prometheus/ if it does not exist
+  ansible.builtin.file:
+    path: /var/lib/prometheus/   
+    state: directory
+    owner: prometheus
+    group: prometheus
+
+- name: Change file ownership, group and permissions
+  ansible.builtin.file:
+    path: /etc/prometheus/
+    owner: prometheus
+    group: prometheus
+    mode: '0755'
+
+- name: Change file ownership, group and permissions
+  ansible.builtin.file:
+    path: /var/lib/prometheus/
+    owner: prometheus
+    group: prometheus
+    mode: '0755'
+
+- name: Clean up the download packages
+  ansible.builtin.shell: 
+    rm -rf ./prometheus*
+
+- name: Copy file with owner and permissions
+  ansible.builtin.copy:
+    src: files/prometheus.yml
+    dest: /etc/prometheus/prometheus.yml
+    owner: prometheus
+    group: prometheus
+    mode: '0755'
+
+- name: Check Prometheus configuration
+  ansible.builtin.shell:
+    promtool check config /etc/prometheus/prometheus.yml
+
+- name: Check if service exists
+  stat: 'path=/etc/systemd/system/prometheus.service'
+  register: servicestatus
+
+- name: Create service file for prometheus
+  become: true
+  ansible.builtin.template: 
+    src: files/prometheus.service
+    dest: /etc/systemd/system/prometheus.service
+    force: yes
+
+- name: Enable prometheus service and ensure it is not masked  if it does not exist
+  become: true
+  ansible.builtin.systemd:
+    daemon_reload: yes
+    name: prometheus
+    enabled: yes
+    masked: no
+    state: started
+  when: not servicestatus.stat.exists
+
+- name: Restart service if already exists
+  become: true
+  ansible.builtin.systemd:
+    name: prometheus
+    state: restarted
+  when: servicestatus.stat.exists

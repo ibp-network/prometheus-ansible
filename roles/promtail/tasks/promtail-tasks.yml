@@ -1,0 +1,63 @@
+---
+# tasks file for promtail
+
+- name: Get latest version of Promtail
+  ansible.builtin.shell: |
+    wget $(curl -s https://api.github.com/repos/grafana/loki/releases/latest |grep "tag_name" | \
+    awk '{print "https://github.com/grafana/loki/releases/download/" \
+    substr($2, 2, length($2)-3) "/promtail-linux-amd64.zip"}')
+    unzip promtail-linux-amd64.zip
+
+- name: Copy files to /usr/local/bin
+  become: true
+  ansible.builtin.shell: |
+    chmod +x "promtail-linux-amd64"
+    mv promtail-linux-amd64 /usr/local/bin/promtail
+
+- name: Ensure group "loki" exists
+  ansible.builtin.group:
+    name: loki
+    state: present
+
+- name: Ensure user loki exists
+  ansible.builtin.user:
+    name: loki
+    state: present
+    group: loki
+
+- name: Add loki user to group syslog, adm and systemd-journal
+  ansible.builtin.user:
+    name: loki
+    groups: adm, systemd-journal
+
+- name: Create /etc/loki/ if it does not exist
+  ansible.builtin.file:
+    path: /etc/loki/
+    state: directory
+    owner: loki
+    group: loki
+    mode: '0755'
+
+- name: Clean up the download packages
+  ansible.builtin.shell: 
+    rm -rf ./promtail*
+
+- name: Check if service exists
+  stat: 'path=/etc/systemd/system/promtail.service'
+  register: servicestatus
+
+- name: Create service file for promtail on monitoring instance if it does not exist
+  become: true
+  ansible.builtin.template: 
+    src: files/promtail.service
+    dest: /etc/systemd/system/promtail.service
+    force: yes
+
+- name: Enable promtail service and ensure it is not masked  if it does not exist
+  become: true
+  ansible.builtin.systemd:
+    daemon_reload: yes
+    name: promtail
+    enabled: yes
+    masked: no
+  when: not servicestatus.stat.exists

@@ -1,0 +1,38 @@
+---
+# tasks file for grafana
+
+- name: Get latest version of grafana
+  ansible.builtin.shell: |
+    wget $(curl -s https://api.github.com/repos/grafana/grafana/releases/latest |grep "tag_name" \
+    | awk '{print "https://dl.grafana.com/oss/release/grafana_" substr($2, 3, length($2)-4) "_amd64.deb"}') 
+
+- name: Install grafana
+  become: true
+  ansible.builtin.shell: |
+    dpkg -i grafana*.deb
+
+- name: Remove grafana binary
+  become: true
+  ansible.builtin.shell: |
+    rm -rf grafana*.deb
+
+- name: Check if service exists
+  stat: 'path=/lib/systemd/system/grafana-server.service'
+  register: servicestatus
+
+- name: Enable grafana service and ensure it is not masked
+  become: true
+  ansible.builtin.systemd:
+    daemon_reload: yes
+    name: grafana-server
+    enabled: yes
+    masked: no
+    state: started
+  when: not servicestatus.stat.exists
+
+- name: Restart service if already exists
+  become: true
+  ansible.builtin.systemd:
+    name: grafana-server
+    state: restarted
+  when: servicestatus.stat.exists

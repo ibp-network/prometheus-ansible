@@ -1,0 +1,15 @@
+- name: Check latest version of Prometheus
+  ansible.builtin.shell: curl -s https://api.github.com/repos/prometheus/prometheus/releases/latest | grep "tag_name" | awk '{print substr($2, 3, length($2)-4)}'
+  register: prometheus_latest_mon
+
+- name: Check latest version of Loki
+  ansible.builtin.shell: curl -s https://api.github.com/repos/grafana/loki/releases/latest | grep tag_name | awk '{print substr($2, 3, length($2)-4)}'
+  register: loki_latest_mon
+
+- name: Check latest version of Node exporter
+  ansible.builtin.shell: curl -s https://api.github.com/repos/prometheus/node_exporter/releases/latest | grep "tag_name" | awk '{print substr($2, 3, length($2)-4)}'
+  register: node_exporter_latest_mon
+
+- name: Check latest version of Grafana
+  ansible.builtin.shell: curl -s https://api.github.com/repos/grafana/grafana/releases/latest | grep "tag_name" | awk '{print substr($2, 3, length($2)-4)}'
+  register: grafana_latest_mon

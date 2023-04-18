@@ -1,0 +1,38 @@
+---
+# tasks file for prometheus
+
+- name: Check latest version of Prometheus if not define from monitoring
+  ansible.builtin.shell: curl -s https://api.github.com/repos/prometheus/prometheus/releases/latest | grep "tag_name" | awk '{print substr($2, 3, length($2)-4)}'
+  register: prometheus_latest
+  when: hostvars['monitor']['prometheus_latest_mon'] is not defined
+
+- name: Get latest version of Prometheus from monitoring
+  ansible.builtin.set_fact: 
+    prometheus_latest: "{{ hostvars['monitor']['prometheus_latest_mon'] }}"
+  when: hostvars['monitor']['prometheus_latest_mon'] is defined
+
+- name: Check installed version of Prometheus
+  ansible.builtin.shell: prometheus --version | grep prometheus | awk '{print substr($3, 0, length($3))}'
+  register: prometheus_installed
+
+- import_tasks: prometheus-tasks.yml
+  when: prometheus_latest.stdout != prometheus_installed.stdout
+
+- name: Copy file with owner and permissions
+  ansible.builtin.copy:
+    src: files/prometheus.yml
+    dest: /etc/prometheus/prometheus.yml
+    owner: prometheus
+    group: prometheus
+    mode: '0755'
+
+- name: Check Prometheus configuration
+  ansible.builtin.shell:
+    promtool check config /etc/prometheus/prometheus.yml
+
+- name: Restart service
+  become: true
+  ansible.builtin.systemd:
+    name: prometheus
+    state: restarted
+    daemon_reload: yes

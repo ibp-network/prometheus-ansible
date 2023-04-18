@@ -1,0 +1,55 @@
+---
+# tasks file for node-exporter
+
+- name: Get latest version of node exporter
+  ansible.builtin.shell: | 
+    wget $(curl -s https://api.github.com/repos/prometheus/node_exporter/releases/latest |grep "tag_name" \
+    | awk '{print "https://github.com/prometheus/node_exporter/releases/download/" \
+    substr($2, 2, length($2)-3) "/node_exporter-" substr($2, 3, length($2)-4) ".linux-amd64.tar.gz"}') 
+    tar xvf node_exporter-*.tar.gz
+    mv ./node_exporter-*.linux-amd64/node_exporter /usr/local/bin/
+
+- name: Ensure group "node_exporter" exists
+  ansible.builtin.group:
+    name: node_exporter
+    state: present
+
+- name: Ensure user "node_exporter" exists
+  ansible.builtin.user:
+    name: node_exporter
+    state: present
+    group: node_exporter
+
+- name: Clean up the download packages
+  ansible.builtin.shell:
+    rm -rf ./node_exporter*
+
+- name: Check if service exists
+  stat: 'path=/etc/systemd/system/node_exporter.service'
+  register: servicestatus
+
+- name: Create service file for node exporter
+  become: true
+  ansible.builtin.template:
+    src: files/node_exporter.service
+    dest: /etc/systemd/system/node_exporter.service
+    force: yes
+  when: not servicestatus.stat.exists
+
+- name: Enable service and ensure it is not masked
+  become: true
+  ansible.builtin.systemd:
+    daemon_reload: yes
+    name: node_exporter
+    enabled: yes
+    masked: no
+    state: started
+  when: not servicestatus.stat.exists
+
+- name: Restart service if already exists
+  become: true
+  ansible.builtin.systemd:
+    name: node_exporter
+    state: restarted
+    daemon_reload: yes
+  when: servicestatus.stat.exists

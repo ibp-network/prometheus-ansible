@@ -1,0 +1,38 @@
+---
+# tasks file for promtail
+
+- name: Check latest version of Loki if not define from monitoring
+  ansible.builtin.shell: curl -s https://api.github.com/repos/grafana/loki/releases/latest | grep tag_name | awk '{print substr($2, 3, length($2)-4)}'
+  register: loki_latest
+  when: hostvars['monitor']['loki_latest_mon'] is not defined
+
+- name: Get latest version of Loki from monitoring
+  ansible.builtin.set_fact: 
+    loki_latest: "{{ hostvars['monitor']['loki_latest_mon'] }}"
+  when: hostvars['monitor']['loki_latest_mon'] is defined
+
+- name: Check installed version of Promtail (same version as Loki)
+  ansible.builtin.shell: promtail -version | grep promtail | awk '{print substr($3, 0, length($3))}'
+  register: promtail_installed
+
+- name: Launch install/update tasks if promtail is not installed or a newer version exists
+  import_tasks: promtail-tasks.yml
+  when: loki_latest.stdout != promtail_installed.stdout
+
+- name: Copy promtail config file
+  ansible.builtin.template:
+    src: templates/promtail-config.j2
+    dest: /etc/loki/promtail-config.yml
+    owner: loki
+    group: loki
+    mode: '0755'
+
+- name: Check Promtail configuration
+  ansible.builtin.shell:
+    promtail -config.file /etc/loki/promtail-config.yml -check-syntax
+
+- name: Restart service
+  become: true
+  ansible.builtin.systemd:
+    name: promtail
+    state: restarted

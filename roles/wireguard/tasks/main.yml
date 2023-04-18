@@ -1,0 +1,27 @@
+---
+# tasks file for wireguard
+
+- name: Check if config file exists
+  stat: 'path=/etc/wireguard/wg0.conf'
+  register: wg_conf
+
+- import_tasks: wireguard-tasks.yml
+  when: not wg_conf.stat.exists
+
+- name: Restart service if already exists
+  become: true
+  ansible.builtin.systemd:
+    name: wg-quick@wg0
+    state: restarted
+    daemon_reload: yes
+  when: wg_conf.stat.exists
+
+- name: Get host public key
+  become: true
+  ansible.builtin.shell: cat /etc/wireguard/public.key
+  register: WIREGUARD_PUBLIC_KEY
+  when: inventory_hostname in groups['monitoring']
+
+- name: Setting host public key as fact
+  set_fact: WG_PUB_KEY="{{ WIREGUARD_PUBLIC_KEY.stdout }}"
+  when: inventory_hostname in groups['monitoring']

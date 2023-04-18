@@ -1,0 +1,19 @@
+---
+# tasks file for grafana
+
+- name: Check latest version of Grafana if not define from monitoring
+  ansible.builtin.shell: curl -s https://api.github.com/repos/grafana/grafana/releases/latest | grep "tag_name" | awk '{print substr($2, 3, length($2)-4)}'
+  register: grafana_latest
+  when: hostvars['monitor']['grafana_latest_mon'] is not defined
+
+- name: Get latest version of Grafana from monitoring
+  ansible.builtin.set_fact: 
+    grafana_latest: "{{ hostvars['monitor']['grafana_latest_mon'] }}"
+  when: hostvars['monitor']['grafana_latest_mon'] is defined
+
+- name: Check installed version of Grafana
+  ansible.builtin.shell: grafana-server --v | awk '{print substr($2, 0, length($2))}'
+  register: grafana_installed
+
+- import_tasks: grafana-tasks.yml
+  when: grafana_latest.stdout != grafana_installed.stdout

@@ -1,0 +1,5 @@
+---
+# defaults file for nginx
+
+DOMAIN: "ibp-monitor.bldnodes.org"
+EMAIL: "gm@bldnodes.org"

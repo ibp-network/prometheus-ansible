@@ -1,0 +1,16 @@
+---
+- hosts: monitoring
+  gather_facts: no
+  become_method: sudo
+  become_user: root 
+  become: yes
+  roles:
+    - roles/common
+    - roles/monitoring-check-versions
+    - roles/prometheus
+    - roles/node-exporter
+    - roles/grafana
+    - roles/loki
+    - roles/promtail
+    - roles/wireguard
+    - roles/nginx

@@ -1,0 +1,1 @@
+ansible-playbook -i hosts -l monitoring ./playbooks/add-peer.yml

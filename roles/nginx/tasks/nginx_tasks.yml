@@ -1,0 +1,61 @@
+---
+# tasks file for nginx
+
+- name: Allow access to http and https ports
+  ufw:
+    rule: allow
+    port: '{{ item }}'
+  with_items:
+    - '80'
+    - '443'
+  ignore_errors: yes
+
+- name: Copy file with owner and permissions
+  ansible.builtin.template:
+    src: templates/nginx-subdomain.j2
+    dest: "/etc/nginx/sites-available/{{ DOMAIN }}"
+    mode: '0755'
+
+- name: Link site into sites enabled
+  become: true
+  ansible.builtin.shell: |
+    ln -s "/etc/nginx/sites-available/{{ DOMAIN }}" "/etc/nginx/sites-enabled"
+
+- name: Check nginx configuration
+  become: true
+  ansible.builtin.shell: |
+    nginx -t
+
+- name: Restart nginx service
+  become: true
+  ansible.builtin.systemd:
+    daemon_reload: yes
+    name: nginx
+    enabled: yes
+    masked: no
+    state: restarted
+
+- name: Issue certificate
+  become: true
+  ansible.builtin.shell: |
+    certbot --nginx --non-interactive --agree-tos --domains "{{ DOMAIN }}" --email "{{ EMAIL }}"
+
+- name: Upgrade nginx conf to use https
+  ansible.builtin.template:
+    src: templates/nginx-subdomain-https.j2
+    dest: "/etc/nginx/sites-available/{{ DOMAIN }}"
+    mode: '0755'
+
+- name: Check nginx configuration
+  become: true
+  ansible.builtin.shell: |
+    nginx -t
+
+- name: Restart nginx service
+  become: true
+  ansible.builtin.systemd:
+    daemon_reload: yes
+    name: nginx
+    enabled: yes
+    masked: no
+    state: restarted

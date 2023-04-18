@@ -1,0 +1,8 @@
+[monitoring]
+monitor ansible_host=ibp-monitoring vpn_ip='172.23.0.1' PROXY_PORT=3000
+
+[all:children]
+monitoring
+
+[all:vars]
+ansible_ssh_private_key_file=~/.ssh/id_ed25519

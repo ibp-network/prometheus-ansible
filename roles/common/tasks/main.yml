@@ -1,0 +1,67 @@
+---
+# tasks file for common
+
+- name: Update and upgrade
+  apt:
+    upgrade: yes
+    update_cache: yes
+    autoremove: yes
+
+- name: install general packages from apt
+  apt:
+    state: present
+    name:
+      - git
+      - zsh
+      - gcc
+      - make
+      - unzip
+      - python3-pip
+      - jq
+      - chrony
+      - ufw
+      - htop
+      - wireguard
+      - rsync
+    update_cache: yes
+
+- name: Update security
+  apt:
+    pkg:
+      - openssl
+      - libssl-dev
+      - libssl-doc
+    state: latest
+    update_cache: yes
+    force: yes
+
+- name: Install monitoring apt packages
+  apt:
+    pkg:
+      - adduser 
+      - libfontconfig1
+      - nginx
+      - python3-certbot-nginx
+      - snapd
+      - certbot
+      - unzip
+    state: latest
+    update_cache: yes
+    force: yes
+  when: inventory_hostname in groups['monitoring']
+
+- name: Install core with option --classic
+  community.general.snap:
+    name: core
+    classic: yes
+  when: inventory_hostname in groups['monitoring']
+
+- name: Check if system is synchronized
+  ansible.builtin.shell: timedatectl | grep "System clock" | awk '{print $NF}'
+  register: synchronized
+
+- name: Install package ntpq if system not synchronized
+  ansible.builtin.apt:
+    name: ntp
+    state: present
+  when: "synchronized.stdout == 'no'"

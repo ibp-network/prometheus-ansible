@@ -1,0 +1,4 @@
+---
+# defaults file for wireguard
+
+WG_PORT: 35759

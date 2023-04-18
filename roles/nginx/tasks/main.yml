@@ -1,0 +1,12 @@
+---
+# tasks file for nginx
+
+- name: Check nginx file exists
+  stat:
+    path: "/etc/nginx/sites-available/{{ DOMAIN }}"
+  register: nginx_file
+
+# If nginx file does not exists, run playbook
+
+- import_tasks: nginx_tasks.yml
+  when: not nginx_file.stat.exists

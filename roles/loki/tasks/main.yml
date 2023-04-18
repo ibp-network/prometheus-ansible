@@ -1,0 +1,38 @@
+---
+# tasks file for loki
+
+- name: Check latest version of Loki if not define from monitoring
+  ansible.builtin.shell: curl -s https://api.github.com/repos/grafana/loki/releases/latest | grep tag_name | awk '{print substr($2, 3, length($2)-4)}'
+  register: loki_latest
+  when: hostvars['monitor']['loki_latest_mon'] is not defined
+
+- name: Get latest version of Loki from monitoring
+  ansible.builtin.set_fact: 
+    loki_latest: "{{ hostvars['monitor']['loki_latest_mon'] }}"
+  when: hostvars['monitor']['loki_latest_mon'] is defined
+
+- name: Check installed version of Loki
+  ansible.builtin.shell: loki -version | grep loki | awk '{print substr($3, 0, length($3))}'
+  register: loki_installed
+
+- name: Launch install/update tasks if loki is not installed or a newer version exists
+  import_tasks: loki-tasks.yml
+  when: loki_latest.stdout != loki_installed.stdout
+
+- name: Copy file with owner and permissions
+  ansible.builtin.template:
+    src: files/loki-config.yml
+    dest: /etc/loki/loki-config.yml
+    owner: loki
+    group: loki
+    mode: '0755'
+
+- name: Check Loki configuration
+  ansible.builtin.shell:
+    loki -config.file /etc/loki/loki-config.yml -verify-config
+
+- name: Restart service
+  become: true
+  ansible.builtin.systemd:
+    name: loki
+    state: restarted
