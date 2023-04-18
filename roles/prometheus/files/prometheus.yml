@@ -24,7 +24,14 @@ scrape_configs:
         labels:
           chain: 'kusama'
           member: 'bLd'
-
+      - targets: ["172.23.0.21:10301", "172.23.0.22:10302"]
+        labels:
+          chain: 'polkadot'
+          member: 'turboflakes'
+     - targets: ["172.23.0.21:10306", "172.23.0.22:10307"]
+        labels:
+          chain: 'kusama'
+          member: 'turboflakes'
 
   - job_name: "testnet-rpc"
     scrape_interval: 5s
@@ -34,6 +41,10 @@ scrape_configs:
         labels:
           chain: 'westend'
           member: 'bLd'
+      - targets: ["172.23.0.21:10311", "172.23.0.22:10312"]
+        labels:
+          chain: 'westend'
+          member: 'turboflakes'
 
   - job_name: "mainnet-bootnodes"
     scrape_interval: 5s
@@ -43,7 +54,14 @@ scrape_configs:
         labels:
           chain: 'polkadot'
           member: 'bLd'
-
+      - targets: ["172.23.0.21:10300"]
+        labels:
+          chain: 'polkadot'
+          member: 'turboflakes'
+      - targets: ["172.23.0.21:10305"]
+        labels:
+          chain: 'kusama'
+          member: 'turboflakes'
 
   - job_name: "testnet-bootnodes"
     scrape_interval: 5s
@@ -53,3 +71,7 @@ scrape_configs:
         labels:
           chain: 'westend'
           member: 'bLd'
+      - targets: ["172.23.0.21:10310"]
+        labels:
+          chain: 'westend'
+          member: 'turboflakes'
