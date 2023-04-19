@@ -12,66 +12,43 @@ scrape_configs:
     static_configs:
       - targets: ["localhost:9100"]
 
-  - job_name: "mainnet-rpc"
+  # Temp entry for init example
+  - job_name: "bld"
     scrape_interval: 5s
     static_configs:
-      # Temp entry for init example
       - targets: ["172.23.0.10:9645"]
         labels:
           chain: 'polkadot'
-          member: 'bLd'
+          node_type: 'rpc'
       - targets: ["172.23.0.10:9655"]
         labels:
           chain: 'kusama'
-          member: 'bLd'
+          node_type: 'rpc'
+
+  - job_name: "turboflakes"
+    scrape_interval: 5s
+    static_configs:
       - targets: ["172.23.0.21:10301", "172.23.0.22:10302"]
         labels:
           chain: 'polkadot'
-          member: 'turboflakes'
-      - targets: ["172.23.0.21:10306", "172.23.0.22:10307"]
-        labels:
-          chain: 'kusama'
-          member: 'turboflakes'
-
-  - job_name: "testnet-rpc"
-    scrape_interval: 5s
-    static_configs:
-      # Temp entry for init example
-      - targets: ["172.23.0.10:9765"]
-        labels:
-          chain: 'westend'
-          member: 'bLd'
-      - targets: ["172.23.0.21:10311", "172.23.0.22:10312"]
-        labels:
-          chain: 'westend'
-          member: 'turboflakes'
-
-  - job_name: "mainnet-bootnodes"
-    scrape_interval: 5s
-    static_configs:
-      # Temp entry for init example
-      - targets: ["172.23.0.10:9815"]
-        labels:
-          chain: 'polkadot'
-          member: 'bLd'
+          node_type: 'rpc'
       - targets: ["172.23.0.21:10300"]
         labels:
           chain: 'polkadot'
-          member: 'turboflakes'
+          node_type: 'boot'
+      - targets: ["172.23.0.21:10306", "172.23.0.22:10307"]
+        labels:
+          chain: 'kusama'
+          node_type: 'rpc'
       - targets: ["172.23.0.21:10305"]
         labels:
           chain: 'kusama'
-          member: 'turboflakes'
-
-  - job_name: "testnet-bootnodes"
-    scrape_interval: 5s
-    static_configs:
-      # Temp entry for init example
-      - targets: ["172.23.0.10:9915"]
+          node_type: 'boot'
+      - targets: ["172.23.0.21:10311", "172.23.0.22:10312"]
         labels:
           chain: 'westend'
-          member: 'bLd'
+          node_type: 'rpc'
       - targets: ["172.23.0.21:10310"]
         labels:
           chain: 'westend'
-          member: 'turboflakes'
+          node_type: 'boot'
