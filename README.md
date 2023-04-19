@@ -8,11 +8,12 @@ Members have 2 choices to connect their nodes to this monitoring:
 
 The monitoring endpoint is available at https://ibp-monitor.bldnodes.org
 
+
 ## Add nodes to Prometheus
 
-Update `roles/prometheus/files/prometheus.yml` by adding one target for each node, under the corresponding job.
-You need to add the following labels for each target: `chain` and `member`. 
-Please respect the naming convention in place for chain label: low caps.
+Update `roles/prometheus/files/prometheus.yml` by adding one target for each node. Add a `job_name` for a new member.
+You need to add the following labels for each target: `chain` and `node_type`. 
+Please respect the naming convention in place for labels: low caps.
 
 
 ## Connect server via the IBP monitoring private network
