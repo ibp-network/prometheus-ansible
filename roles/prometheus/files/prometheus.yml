@@ -53,7 +53,7 @@ scrape_configs:
           chain: 'westend'
           node_type: 'boot'
 
-  - job_name: ibpfederation
+  - job_name: amforc
     metrics_path: /federate
     honor_labels: true
     scheme: https
@@ -63,4 +63,3 @@ scrape_configs:
     static_configs:
     - targets:
       - ibp-monitor.amforc.com:9090
-      # - ibp-monitor.member.com:9090
