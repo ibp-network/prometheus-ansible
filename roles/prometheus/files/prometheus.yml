@@ -82,3 +82,7 @@ scrape_configs:
     static_configs:
       - targets:
         - "31.22.13.147:50090"
+    metric_relabel_configs:
+      - source_labels: [instance]
+        regex: '.*'
+        action: labeldrop
