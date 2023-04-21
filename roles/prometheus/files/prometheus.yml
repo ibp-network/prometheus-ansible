@@ -72,14 +72,13 @@ scrape_configs:
     - targets:
       - ibp-monitor.amforc.com:9090
 
-  - job_name: 'federate'
+  - job_name: 'metaspan'
     scrape_interval: 15s
     honor_labels: true
     metrics_path: '/federate'
     params:
       'match[]':
-      - '{job="substrate_nodes", role=~"rpc|boot"}'
-      - '{job="parachain_nodes", role=~"rpc|boot"}'
+      - '{job="ibp-prometheus"}'
     static_configs:
       - targets:
         - "31.22.13.147:50090"
