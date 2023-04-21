@@ -9,11 +9,30 @@ Members have 2 choices to connect their nodes to this monitoring:
 The monitoring endpoint is available at https://ibp-monitor.bldnodes.org
 
 
+## Federated metrics
+
+Members using their own prometheus can setup [federated metrics](https://github.com/ibp-network/member-prometheus) to avoid exposing their node metric endpoints.
+
 ## Add nodes to Prometheus
 
 Update `roles/prometheus/files/prometheus.yml` by adding one target for each node. Add a `job_name` for a new member.
-You need to add the following labels for each target: `chain` and `node_type`. 
-Please respect the naming convention in place for labels: low caps.
+You need to add the following labels for each target: `member`, `chain` and `node_type`. 
+
+Please respect the naming convention in place for label in low caps.
+
+`chain` values:
+- polkadot
+- kusama
+- westend
+- statemint
+- statemine
+- westmint
+- collectives-polkadot
+- collectives-westend
+- bridge-hub-polkadot
+- bridge-hub-kusama
+- bridge-hub-westend
+- encointer
 
 
 ## Connect server via the IBP monitoring private network
