@@ -55,3 +55,14 @@ scrape_configs:
     static_configs:
       - targets:
         - "192.96.202.185:59090"
+
+  - job_name: 'helikon'
+    scrape_interval: 15s
+    honor_labels: true
+    metrics_path: '/federate'
+    params:
+      'match[]':
+      - '{job="substrate"}'     
+    static_configs:
+      - targets:
+        - "82.222.18.146:19300"
