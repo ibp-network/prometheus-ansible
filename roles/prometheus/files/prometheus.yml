@@ -18,10 +18,10 @@ scrape_configs:
     scheme: https
     params:
       match[]:
-      - '{job="substrate"}'
+        - '{job="substrate"}'
     static_configs:
-    - targets:
-      - ibp-prometheus.turboflakes.io:9095
+      - targets:
+          - ibp-prometheus.turboflakes.io:9095
 
   - job_name: amforc
     metrics_path: /federate
@@ -29,40 +29,51 @@ scrape_configs:
     scheme: https
     params:
       match[]:
-      - '{job="substrate"}'
-    static_configs:
-    - targets:
-      - ibp-monitor.amforc.com:9090
-
-  - job_name: 'metaspan'
-    scrape_interval: 15s
-    honor_labels: true
-    metrics_path: '/federate'
-    params:
-      'match[]':
-      - '{job="ibp-prometheus"}'
+        - '{job="substrate"}'
     static_configs:
       - targets:
-        - "31.22.13.147:50090"
+          - ibp-monitor.amforc.com:9090
 
-  - job_name: 'stakeplus'
+  - job_name: "metaspan"
     scrape_interval: 15s
     honor_labels: true
-    metrics_path: '/federate'
+    metrics_path: "/federate"
     params:
-      'match[]':
-      - '{job="substrate"}'     
+      "match[]":
+        - '{job="ibp-prometheus"}'
     static_configs:
       - targets:
-        - "192.96.202.185:59090"
+          - "31.22.13.147:50090"
 
-  - job_name: 'helikon'
+  - job_name: "stakeplus"
     scrape_interval: 15s
     honor_labels: true
-    metrics_path: '/federate'
+    metrics_path: "/federate"
     params:
-      'match[]':
-      - '{job="substrate"}'     
+      "match[]":
+        - '{job="substrate"}'
     static_configs:
       - targets:
-        - "82.222.18.146:19300"
+          - "192.96.202.185:59090"
+
+  - job_name: "helikon"
+    scrape_interval: 15s
+    honor_labels: true
+    metrics_path: "/federate"
+    params:
+      "match[]":
+        - '{job="substrate"}'
+    static_configs:
+      - targets:
+          - "82.222.18.146:19300"
+
+  - job_name: "gatotech"
+    scrape_interval: 15s
+    honor_labels: true
+    metrics_path: "/federate"
+    params:
+      "match[]":
+        - '{job="substrate"}'
+    static_configs:
+      - targets:
+          - "scrapper.gatotech.network:9090"
