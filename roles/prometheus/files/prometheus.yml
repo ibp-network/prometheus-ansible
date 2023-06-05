@@ -76,4 +76,4 @@ scrape_configs:
         - '{job="substrate"}'
     static_configs:
       - targets:
-          - "scrapper.gatotech.network:9090"
+          - "scrapper.gatotech.network"
