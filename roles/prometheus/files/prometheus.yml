@@ -77,3 +77,14 @@ scrape_configs:
     static_configs:
       - targets:
           - "scrapper.gatotech.network"
+
+  - job_name: dwellir
+    metrics_path: /713173e6-ff3f-46ab-b245-b41da8f717d3/federate
+    honor_labels: true
+    scheme: https
+    params:
+      match[]:
+        - '{__name__=~"substrate.*"}'
+    static_configs:
+      - targets:
+        - ibp-metrics-ng.dwellir.com
