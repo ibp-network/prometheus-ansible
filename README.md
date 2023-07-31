@@ -16,7 +16,7 @@ Members using their own prometheus can setup [federated metrics](https://github.
 ## Add nodes to Prometheus
 
 Update `roles/prometheus/files/prometheus.yml` by adding one target for each node. Add a `job_name` for a new member.
-You need to add the following labels for each target: `member`, `chain` and `node_type`. 
+You need to add the following labels for each target: `member`, `chain` and `node_type` (values = `rpc` or `boot`). 
 
 Please respect the naming convention in place for label in low caps.
 
