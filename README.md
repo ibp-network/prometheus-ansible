@@ -37,6 +37,8 @@ Please respect the naming convention in place for label in low caps.
 
 ## Connect server via the IBP monitoring private network
 
+This is just an alternative method to connect but [federated metrics](https://github.com/ibp-network/member-prometheus) should be privileged.
+
 Pre-requisite: ask for a VPN IP address in the group `IBP Members`.
 
 Install Wireguard
