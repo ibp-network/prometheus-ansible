@@ -40,10 +40,10 @@ scrape_configs:
     metrics_path: "/federate"
     params:
       "match[]":
-        - '{job="ibp-prometheus"}'
+        - '{job="substrate"}'
     static_configs:
       - targets:
-          - "31.22.13.147:50090"
+          - "195.144.22.130:9090"
 
   - job_name: "stakeplus"
     scrape_interval: 15s
