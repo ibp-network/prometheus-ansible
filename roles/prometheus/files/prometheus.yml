@@ -88,3 +88,14 @@ scrape_configs:
     static_configs:
       - targets:
           - ibp-metrics-ng.dwellir.com
+
+  - job_name: radiumblock
+    metrics_path: /federate
+    honor_labels: true
+    scheme: https
+    params:
+      match[]:
+        - '{job="substrate"}'
+    static_configs:
+      - targets:
+          - ibp-prometheus.radiumblock.co:9090
