@@ -88,3 +88,14 @@ scrape_configs:
     static_configs:
       - targets:
           - ibp-metrics-ng.dwellir.com
+
+  - job_name: "rotko"
+    metrics_path: "/federate"
+    honor_labels: true
+    scheme: https
+    params:
+      match[]:
+        - '{__name__=~"substrate.*"}'
+    static_configs:
+      - targets:
+          - ibp-metrics.rotko.net
