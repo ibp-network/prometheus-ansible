@@ -89,6 +89,17 @@ scrape_configs:
       - targets:
           - ibp-metrics-ng.dwellir.com
 
+  - job_name: "rotko"
+    metrics_path: "/federate"
+    honor_labels: true
+    scheme: https
+    params:
+      match[]:
+        - '{__name__=~"substrate.*"}'
+    static_configs:
+      - targets:
+          - ibp-metrics.rotko.net
+
   - job_name: radiumblock
     metrics_path: /federate
     honor_labels: true
@@ -98,4 +109,4 @@ scrape_configs:
         - '{job="substrate"}'
     static_configs:
       - targets:
-          - ibp-prometheus.radiumblock.co:9090
+          - ibp-prometheus.radiumblock.co
