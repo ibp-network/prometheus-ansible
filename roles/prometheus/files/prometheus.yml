@@ -76,7 +76,7 @@ scrape_configs:
         - '{job="substrate"}'
     static_configs:
       - targets:
-          - "138.59.133.248:9090"
+          - "138.59.133.242:9090"
 
   - job_name: dwellir
     metrics_path: /713173e6-ff3f-46ab-b245-b41da8f717d3/federate
