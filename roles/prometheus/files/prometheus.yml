@@ -110,3 +110,14 @@ scrape_configs:
     static_configs:
       - targets:
           - ibp-prometheus.radiumblock.co
+
+  - job_name: polkadotters
+    metrics_path: /federate
+    honor_labels: true
+    scheme: https
+    params:
+      match[]:
+        - '{job="substrate"}'
+    static_configs:
+      - targets:
+        - 202.37.148.106:19090
