@@ -120,4 +120,4 @@ scrape_configs:
         - '{job="substrate"}'
     static_configs:
       - targets:
-        - 202.37.148.106:19090
+        - "202.37.148.106:19090"
