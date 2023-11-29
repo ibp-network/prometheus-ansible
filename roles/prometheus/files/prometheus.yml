@@ -114,7 +114,6 @@ scrape_configs:
   - job_name: polkadotters
     metrics_path: /federate
     honor_labels: true
-    scheme: https
     params:
       match[]:
         - '{job="substrate"}'
