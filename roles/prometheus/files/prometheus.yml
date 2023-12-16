@@ -65,7 +65,7 @@ scrape_configs:
         - '{job="substrate"}'
     static_configs:
       - targets:
-          - "82.222.18.146:19300"
+          - "77.92.101.227:19300"
 
   - job_name: "gatotech"
     scrape_interval: 15s
