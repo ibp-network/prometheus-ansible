@@ -43,7 +43,7 @@ scrape_configs:
         - '{job="substrate"}'
     static_configs:
       - targets:
-          - "195.144.22.130:9090"
+          - "ibp-metrics.metaspan.io" 
 
   - job_name: "stakeplus"
     scrape_interval: 15s
