@@ -54,7 +54,7 @@ scrape_configs:
         - '{job="substrate"}'
     static_configs:
       - targets:
-          - "prometheus.stake.plus:443"
+          - "prometheus.stake.plus"
 
   - job_name: "helikon"
     scrape_interval: 15s
