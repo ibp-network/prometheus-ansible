@@ -48,7 +48,7 @@ scrape_configs:
   - job_name: "stakeplus"
     scrape_interval: 15s
     honor_labels: true
-    metrics_path: "/federate"
+    metrics_path: "/metrics"
     params:
       "match[]":
         - '{job="substrate"}'
