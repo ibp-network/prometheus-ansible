@@ -43,7 +43,7 @@ scrape_configs:
         - '{job="substrate"}'
     static_configs:
       - targets:
-          - "ibp-metrics.metaspan.io" 
+          - "ibp-metrics.metaspan.io"
 
   - job_name: "stakeplus"
     scrape_interval: 15s
@@ -120,3 +120,13 @@ scrape_configs:
     static_configs:
       - targets:
         - "202.37.148.106:19090"
+
+  - job_name: stkd
+    metrics_path: /federate
+    honor_labels: true
+    params:
+      match[]:
+        - '{__name__=~"substrate.*"}'
+    static_configs:
+      - targets:
+        - "ibp-metrics.stkd.io:9095"
